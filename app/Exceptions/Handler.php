@@ -55,25 +55,31 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof CustomException) {
-            return response()->json(['code' => $exception->getCode(), 'message' => $exception->getMessage(), 'data' => null]);
+            return $this->response(['code' => $exception->getCode(), 'message' => $exception->getMessage(), 'data' => null]);
         }
 
         if ($exception instanceof NotFoundHttpException) {
-            return response()->json(['code' => NOT_EXISTS, 'message' => '404T_T', 'data' => null]);
+            return $this->response(['code' => NOT_EXISTS, 'message' => '404T_T', 'data' => null]);
         }
 
         if ($exception instanceof AuthenticationException) {
-            return response()->json(['code' => EXPIRED, 'message' => '未登录', 'data' => null]);
+            return $this->response(['code' => EXPIRED, 'message' => '未登录', 'data' => null]);
         }
 
         if ($exception instanceof AuthorizationException) {
-            return response()->json(['code' => NOT_ALLOWED, 'message' => '无权操作', 'data' => null]);
+            return $this->response(['code' => NOT_ALLOWED, 'message' => '无权访问', 'data' => null]);
         }
+
         return parent::render($request, $exception);
     }
 
     protected function invalidJson($request, ValidationException $exception)
     {
-        return response()->json(['code' => PARAM_ERROR, 'message' => $exception->validator->errors()->first(), 'data' => null]);
+        return $this->response(['code' => PARAM_ERROR, 'message' => $exception->validator->errors()->first(), 'data' => null]);
+    }
+
+    public function response($params)
+    {
+        return response()->json($params)->setEncodingOptions(JSON_UNESCAPED_UNICODE);
     }
 }
