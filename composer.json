@@ -1,7 +1,7 @@
 {
     "name": "wangchengtao/demo",
     "type": "project",
-    "description": "基于 laravel 7.0 开发的初始化项目.",
+    "description": "基于 laravel 8.0 开发的初始化项目.",
     "keywords": [
         "framework",
         "laravel"
