@@ -17,13 +17,13 @@ class Controller extends BaseController
             'code' => SUCCESS,
             'message' => $message,
             'data' => $data,
-        ]);
+        ])->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
     protected function error($message = '请求失败', $code = FAILED, $data = [])
     {
         $result = compact('message', 'code', 'data');
 
-        return response()->json($result);
+        return response()->json($result)->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 }

@@ -31,51 +31,48 @@ class Handler extends ExceptionHandler
     ];
 
     /**
-     * Report or log an exception.
-     *
-     * @param  \Throwable  $exception
-     * @return void
-     *
-     * @throws \Throwable
+     * Register the exception handling callbacks for the application.
      */
-    public function report(Throwable $exception)
+    public function register(): void
     {
-        parent::report($exception);
+        $this->renderable(function (Throwable $e) {
+            //
+        });
     }
 
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $exception
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Throwable               $e
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @throws \Throwable
      */
-    public function render($request, Throwable $exception)
+    public function render($request, Throwable $e)
     {
-        if ($exception instanceof CustomException) {
-            return $this->response(['code' => $exception->getCode(), 'message' => $exception->getMessage(), 'data' => null]);
+        if ($e instanceof CustomException) {
+            return $this->response(['code' => $e->getCode(), 'message' => $e->getMessage()]);
         }
 
-        if ($exception instanceof NotFoundHttpException) {
-            return $this->response(['code' => NOT_EXISTS, 'message' => '404T_T', 'data' => null]);
+        if ($e instanceof NotFoundHttpException) {
+            return $this->response(['code' => NOT_EXISTS, 'message' => '404T_T']);
         }
 
-        if ($exception instanceof AuthenticationException) {
-            return $this->response(['code' => EXPIRED, 'message' => '未登录', 'data' => null]);
+        if ($e instanceof AuthenticationException) {
+            return $this->response(['code' => EXPIRED, 'message' => '未登录']);
         }
 
-        if ($exception instanceof AuthorizationException) {
-            return $this->response(['code' => NOT_ALLOWED, 'message' => '无权访问', 'data' => null]);
+        if ($e instanceof AuthorizationException) {
+            return $this->response(['code' => NOT_ALLOWED, 'message' => '无权访问']);
         }
 
-        return parent::render($request, $exception);
+        return parent::render($request, $e);
     }
 
     protected function invalidJson($request, ValidationException $exception)
     {
-        return $this->response(['code' => PARAM_ERROR, 'message' => $exception->validator->errors()->first(), 'data' => null]);
+        return $this->response(['code' => PARAM_ERROR, 'message' => $exception->validator->errors()->first()]);
     }
 
     public function response($params)
