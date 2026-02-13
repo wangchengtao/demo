@@ -1,0 +1,12 @@
+#! /bin/bash
+
+# 仅处理暂存的 PHP 文件
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.php$' | grep -v 'app/Http/Kernel.php')
+
+if [ -n "$STAGED_FILES" ]; then
+    echo "Formatting PHP files with PHP-CS-Fixer..."
+    ./vendor/bin/php-cs-fixer fix --path-mode=intersection $STAGED_FILES --config=.php-cs-fixer.dist.php
+    git add $STAGED_FILES
+fi
+
+exit 0

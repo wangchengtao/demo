@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Exceptions;
 
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Auth\AuthenticationException;
+use App\Constants\BizCode;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\App;
 use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Summer\ExceptionNotify\Message\Dingtalk\DingtalkText;
+use Summer\LaravelExceptionNotify\Notify;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -35,48 +38,34 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $this->renderable(function (Throwable $e) {
-            //
+        $this->reportable(function (Throwable $e) {
+            if (App::isProduction()) {
+                $message = new DingtalkText();
+                $message->setTitle('服务器内部错误');
+                $message->setContent($e->getMessage());
+
+                Notify::send($message);
+            }
         });
-    }
 
-    /**
-     * Render an exception into an HTTP response.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Throwable               $e
-     * @return \Symfony\Component\HttpFoundation\Response
-     *
-     * @throws \Throwable
-     */
-    public function render($request, Throwable $e)
-    {
-        if ($e instanceof CustomException) {
+        $this->renderable(function (CustomException $e) {
             return $this->response(['code' => $e->getCode(), 'message' => $e->getMessage()]);
-        }
+        });
 
-        if ($e instanceof NotFoundHttpException) {
-            return $this->response(['code' => NOT_EXISTS, 'message' => '404T_T']);
-        }
+        $this->renderable(function (ValidationException $e) {
+            // @formatter:off
+            return $this->response(['code' => BizCode::FAIL->value, 'message' => $e->validator->errors()->first()]);
+        });
 
-        if ($e instanceof AuthenticationException) {
-            return $this->response(['code' => EXPIRED, 'message' => '未登录']);
-        }
+        $this->renderable(function (Throwable $e) {
+            $message = App::isProduction() ? '服务器内部错误' : $e->getMessage();
 
-        if ($e instanceof AuthorizationException) {
-            return $this->response(['code' => NOT_ALLOWED, 'message' => '无权访问']);
-        }
-
-        return parent::render($request, $e);
-    }
-
-    protected function invalidJson($request, ValidationException $exception)
-    {
-        return $this->response(['code' => PARAM_ERROR, 'message' => $exception->validator->errors()->first()]);
+            return $this->response(['code' => BizCode::FAIL->value, 'message' => $message]);
+        });
     }
 
     public function response($params)
     {
-        return response()->json($params)->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+        return response()->json($params)->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 }

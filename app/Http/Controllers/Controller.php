@@ -1,29 +1,54 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Constants\BizCode;
+use App\Supports\ApiResult;
+use App\Supports\PageResult;
+use App\Supports\PaginateModel;
+use App\Supports\Result;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    use AuthorizesRequests;
+    use DispatchesJobs;
+    use ValidatesRequests;
 
-    protected function success($data = [], $message = '请求成功')
+    protected function paginate(LengthAwarePaginator $paginator): JsonResponse
     {
-        return response()->json([
-            'code' => SUCCESS,
-            'message' => $message,
-            'data' => $data,
-        ])->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $model = PaginateModel::fromPaginator($paginator);
+
+        return $this->response(new PageResult($model));
     }
 
-    protected function error($message = '请求失败', $code = FAILED, $data = [])
+    protected function collection(ResourceCollection $collection): JsonResponse
     {
-        $result = compact('message', 'code', 'data');
+        $model = PaginateModel::fromCollection($collection);
 
-        return response()->json($result)->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        return $this->response(new PageResult($model));
+    }
+
+    protected function success(mixed $data = null): JsonResponse
+    {
+        return $this->response(ApiResult::success($data));
+    }
+
+    protected function error(string $message = '请求失败', BizCode $code = BizCode::FAIL): JsonResponse
+    {
+        return $this->response(new Result($code->value, $message));
+    }
+
+    protected function response(Result $result): JsonResponse
+    {
+        return response()->json($result)->setEncodingOptions(320);
     }
 }
