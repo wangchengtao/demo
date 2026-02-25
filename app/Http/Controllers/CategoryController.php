@@ -20,7 +20,15 @@ class CategoryController extends Controller
     {
         $categories = Category::query()->filter($query->toArray())->paginate($query->size);
 
-        return $this->success(CategoryResource::collection($categories));
+        return $this->paginate($categories);
+    }
+
+    #[Endpoint('搜索')]
+    public function search()
+    {
+        $categories = Category::all();
+
+        return $this->collection(CategoryResource::collection($categories));
     }
 
     #[Endpoint('创建')]

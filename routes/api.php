@@ -14,4 +14,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('categories/search', 'CategoryController@search')->name('categories.search');
 Route::apiResource('categories', 'CategoryController');
