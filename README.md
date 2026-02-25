@@ -5,5 +5,5 @@
 `composer create-project wangchengtao/demo`
 
 ## 其它
-1. ![img.png](docs/img.png)
+![img.png](docs/img.png)
 
