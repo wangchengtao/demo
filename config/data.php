@@ -13,7 +13,7 @@ return [
      * convert the date to the correct timezone. If set to null no timezone will
      * be passed.
      */
-    'date_timezone' => null,
+    'date_timezone' => 'Asia/Shanghai',
 
     /*
      * It is possible to enable certain features of the package, these would otherwise

@@ -8,14 +8,19 @@ use App\Http\Domain\Requests\Payloads\CategoryPayload;
 use App\Http\Domain\Requests\Queries\CategoryQuery;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Knuckles\Scribe\Attributes\Endpoint;
 use Knuckles\Scribe\Attributes\Group;
 use Knuckles\Scribe\Attributes\Response;
+use Knuckles\Scribe\Attributes\ResponseFromApiResource;
+use Knuckles\Scribe\Attributes\ResponseFromFile;
 
 #[Group('Category', '分类')]
 class CategoryController extends Controller
 {
     #[Endpoint('列表')]
+    #[ResponseFromApiResource(CategoryResource::class, Category::class, collection: true)]
     public function index(CategoryQuery $query)
     {
         $categories = Category::query()->filter($query->toArray())->paginate($query->size);
@@ -24,9 +29,9 @@ class CategoryController extends Controller
     }
 
     #[Endpoint('搜索')]
-    public function search()
+    public function search(Request $request)
     {
-        $categories = Category::all();
+        $categories = Category::filter($request->all())->get();
 
         return $this->collection(CategoryResource::collection($categories));
     }
@@ -50,7 +55,9 @@ class CategoryController extends Controller
     }
 
     #[Endpoint('详情')]
-    public function show(Category $category)
+    #[ResponseFromFile('responses/category/show.json')]
+    #[ResponseFromApiResource(CategoryResource::class, Category::class)]
+    public function show(Category $category): JsonResponse
     {
         return $this->success(new CategoryResource($category));
     }
