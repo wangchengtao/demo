@@ -4,7 +4,7 @@ return [
     'default' => env('NOTIFY_DEFAULT_CHANNEL', 'dingtalk'),
     'channels' => [
         'dingtalk' => [
-            'driver' => Summer\ExceptionNotify\Channel\Dingtalk::class,
+            'driver' => Summer\MessageNotify\Channel\Dingtalk::class,
 
             /*
              * 自定义机器人调用接口的凭证
@@ -34,14 +34,14 @@ return [
             'at' => explode(',', env('DINGTALK_AT', '')),
         ],
         'feishu' => [
-            'driver' => Summer\ExceptionNotify\Channel\Feishu::class,
+            'driver' => Summer\MessageNotify\Channel\Feishu::class,
             'access_token' => env('FEISHU_ACCESS_TOKEN', 'your access token'),
             'auth_type' => env('FEISHU_KEYWORD', 'keyword'),
             'keyword' => env('FEISHU_KEYWORD', 'your keyword'),
             'secret' => env('FEISHU_SECRET', 'your secret'),
         ],
         'wechat' => [
-            // 'driver' => Summer\ExceptionNotify\Channel\Wechat::class,
+            // 'driver' => Summer\MessageNotify\Channel\Wechat::class,
             'access_token' => env('WECHAT_ACCESS_TOKEN', 'your access token'),
         ],
     ],

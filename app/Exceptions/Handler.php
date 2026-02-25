@@ -8,8 +8,8 @@ use App\Constants\BizCode;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\App;
 use Illuminate\Validation\ValidationException;
-use Summer\ExceptionNotify\Message\Dingtalk\DingtalkText;
-use Summer\LaravelExceptionNotify\Notify;
+use Summer\LaravelMessageNotify\Notify;
+use Summer\MessageNotify\Message\Dingtalk\DingtalkText;
 use Throwable;
 
 class Handler extends ExceptionHandler
