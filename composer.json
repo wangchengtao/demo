@@ -5,6 +5,7 @@
     "keywords": [
         "laravel", "skeleton", "demo"
     ],
+    "license": "MIT",
     "require": {
         "php": "^8.1",
         "guzzlehttp/guzzle": "^7.2",
