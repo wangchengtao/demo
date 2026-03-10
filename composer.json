@@ -8,10 +8,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
-        "guzzlehttp/guzzle": "^7.2",
         "knuckleswtf/scribe": "^5.8",
         "laravel/framework": "^10.0",
-        "laravel/tinker": "^2.8",
         "spatie/laravel-data": "^4.19",
         "tucker-eric/eloquentfilter": "^3.2.0",
         "wangchengtao/laravel-message-notify": "^1.0"
@@ -22,6 +20,7 @@
         "fakerphp/faker": "^1.9.1",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.18",
+        "laravel/tinker": "^2.8",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^7.0",
         "phpunit/phpunit": "^10.0",
